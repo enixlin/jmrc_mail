@@ -1,0 +1,959 @@
+<<<<<<< HEAD
+
+
+
+
+
+<div class="dialog_box" id="login">
+	<a class="niming" style="position: absolute;right: 0;cursor: pointer;"  onclick="querys()"></a>
+	<a class="lianxi" style="position: absolute;left: 0;cursor: pointer;"  onclick="queryContact()"></a>
+	<form id="loginForm" name="form11" method="post" onsubmit="return check()">
+		<div class="login_img" style="visibility: hidden;margin-bottom: 0;">
+			<img src="win10_login/images/login_img.png">
+		</div>
+		<div id="logininfo" style="color:#F00"></div>
+		<div class="login_input" id="usernameBox">
+			<!--[if IE]><div class="login_sreach"></div><![endif]-->
+			<input type="text"  id="usernameByEye" name="usernameByEye" onkeydown="KeyDown()">
+			<div class="login_tips">输入用户名</div>
+		</div>
+		
+		<div class="login_input">
+			<input type="password"  id="passwordByEye" name="passwordByEye"  autocomplete="off" htmlEscape="true" onkeyup="changflag()"  onkeydown="KeyDown()">
+			<div class="login_tips">输入密码</div>
+		</div>
+		<div id="codeDiv" style="margin-bottom:10px;">			
+		</div>
+		<div class="xuan_input" style="margin: 0 auto 5px;width: 163px;text-align: left;color: #fff;font-size: 12px;">
+			<label>
+				<input type="checkbox" id="jizhumima" value="1"  style="vertical-align: middle;" onkeydown="KeyDown()"> 记住密码
+			</label>
+		</div>
+		<input style="display:none" type="submit"/>
+		<div class="login_button_box clearfix">
+			<a class="button" onclick="submitFun()">确认</a>
+			<a href="" class="button btn-cancel">取消</a>
+		</div>
+	  
+	  
+	  <input type="hidden" id="username" name="username">
+	  <input type="hidden" id="flag" name="flag" value="true">
+	  <input type="hidden" id="password" name="password">
+	  <input type='hidden' name='loginPage'  id="loginPageURL"/>    
+	  <input type='hidden' name='service'  id="serviceURL"/>
+	</form>
+</div>
+<script src="/portal/win10_login/security.min.js?v=1.0.0"  type="text/javascript"></script>
+<script type="text/javascript">
+var PORTAL_VIS = {
+	contextPath:"/portal",
+	loginNum: 1
+	
+};
+var focusPan = false;
+
+
+
+var flag=document.getElementById('flag').value;
+$(function(){
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		
+		for(var i in json){
+			if(i == 0){
+				$("#usernameByEye").val(json[i]['name']);
+				$("#passwordByEye").val(json[i]['password']);
+				$("#password").val(json[i]['password']);
+				if(json[i]['password'] != ''){
+					document.getElementById('jizhumima').checked = true;
+				}
+				break;
+			}
+			
+		}
+	}
+	
+	showLoginMessage();	
+})
+
+//检查是否登录失败
+function showLoginMessage(){
+	if(VIS_PORTAL.loginFailure == "true") {//登录失败
+		firstLogin = false;
+		showloginmsg(VIS_PORTAL.loginFailuremsg);
+		if(VIS_PORTAL.loginFailuremsg=="用户不存在") {
+			$("#usernameByEye").focus();
+		} else if(VIS_PORTAL.loginFailuremsg=="密码错误,登录失败") {
+			$("#usernameByEye").focus();
+			$("#passwordByEye").focus();
+		} else {
+			$("#usernameByEye").focus();
+		}
+		//$("#username").focus();
+		//$("#usernameByEye").focus();
+	}
+}
+
+
+function changflag(){
+	flag = "true";
+	document.getElementById('flag').value="true";
+}
+
+$("#usernameByEye").on('keyup',function  () {
+	var conentVal = $(this).val();
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		for(var i in json){
+			if(json[i]['name'].indexOf(conentVal)>-1){
+				content += '<li ><a href="javascript:;" password="'+json[i]['password']+'">'+json[i]['name']+'</a><div onclick="delectBtn(this)" class="delectBtn"></div></li>';
+			}
+		}
+		$(".login_sreach").html(content).show();
+	}
+	$("#passwordByEye").val('');
+})
+
+$("#passwordByEye").focus(function(){
+	$(".login_sreach").hide();
+})
+
+
+$("#usernameBox").click(function(e){
+	e.stopPropagation();
+	$(this).find("input").focus();
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		var jsonArrary = [];
+		var jsonLength;
+		for(var i in json){
+			jsonArrary[i] = json[i];
+		}
+		if(jsonArrary.length > 10){
+			jsonLength = 10;
+		}else{
+			jsonLength = jsonArrary.length;
+		}
+		for(var j = 0;j < jsonLength; j++){
+			
+			content += '<li ><a href="javascript:;" password="'+jsonArrary[j]['password']+'">'+jsonArrary[j]['name']+'</a><div onclick="delectBtn(this)" class="delectBtn"></div></li>';
+			
+		}
+		$(".login_sreach").html(content).show();
+	}
+	
+})
+
+
+$("#usernameBox").on('click','.login_sreach a',function(e){
+	e.stopPropagation();
+	var conentVal = $(this).text();
+	var conentPass = $(this).attr('password');
+	if(conentPass != ''){
+		document.getElementById('jizhumima').checked = true;
+	}else{
+		document.getElementById('jizhumima').checked = false;
+	}
+	$("#usernameByEye").val(conentVal).next().hide();
+	$("#passwordByEye").val(conentPass).next().hide();
+	$(".login_sreach").hide();
+})
+
+$("body,#login").click(function(){
+	$(".login_sreach").hide();
+})
+
+$("#codeDiv").hide();
+
+loginNumF(); 
+
+
+function showloginmsg(msg){
+	$("#logininfo").text(msg);
+	document.getElementById('password').value = "";
+	//$("#username").focus();
+}
+
+function loginNumF(){		
+    var loginNum_= PORTAL_VIS.loginNum;
+    if(loginNum_>3){
+       var codeHtmlStr='<input id="veryCode" name="veryCode" type="text" onkeydown="KeyDown()" maxlength="4"/> '
+                       +'<img id="imgObj" style="cursor:pointer;border:none;" alt="'+PORTAL_VIS.contextPath+'/kaptcha.jpg" src="'+PORTAL_VIS.contextPath+'/kaptcha.jpg" />'
+                       +'<div id="info"></div>';
+       	$("#codeDiv").html(codeHtmlStr);
+	    $("#codeDiv").show();
+    }
+}
+
+
+$(".dialog_box").on('click','#imgObj',function(){
+	refreshKaptchaImg();
+});
+
+
+initHiddenValues();
+
+
+function initHiddenValues(){
+	document.getElementById("loginPageURL").value = VIS_PORTAL.loginPageURL;
+	document.getElementById("serviceURL").value = VIS_PORTAL.serviceURL;
+}
+
+function KeyDown(){	
+	if(event.keyCode == 13){
+		event.returnValue = false;
+		event.cancel = true;
+		var isHaveCode = $("#codeDiv").is(":visible");
+		if(isHaveCode){
+			checkCode();
+		}else{
+			savePassFun(function  () {
+				$('#loginForm').submit();
+			})
+		}
+	}
+}
+
+if(firstLogin){	
+	$("#usernameByEye").focus();
+}
+
+function submitFun(){
+	var isHaveCode = $("#codeDiv").is(":visible");
+	if(isHaveCode) {
+		checkCode();
+		savePassFun(function  () {
+		})
+	} else {
+		savePassFun(function  () {
+			$('#loginForm').submit();
+		})
+		
+	}
+}
+
+function check(){
+	var name = document.getElementById("usernameByEye").value;
+	var password = document.getElementById('passwordByEye').value;
+	if (name=="") {
+	showloginmsg("用户名不能为空");
+	$("#usernameByEye").focus();
+		return false;
+	} else if(password==""){
+		showloginmsg("密码不能为空");
+		$("#passwordByEye").focus();
+		return false;
+	} 
+	
+	/** 数据加密*/
+	
+	if(flag=="true") {//flag 为true的，表示手工输入密码		
+	 	document.getElementById('password').value = password;
+	 } else {//flag 为false的，表示默认使用cookie密码
+	    var userObj = getCookie('userObj');
+		if(userObj != null && userObj != undefined){
+			json = JSON.parse(userObj);
+			var content = '';
+			for(var i in json){
+				if((json[i]['password'] != password && json[i]['password'] != '') && json[i]['name'] == name){//采用cookie密码，检查文本框中的密码跟cookie密文是否一致，不一致则加密
+				   password=password;
+				}else if((json[i]['password'] != password && json[i]['password'] == '') && json[i]['name'] == name){
+				   password=password;
+				}
+			} 
+		}
+	 	document.getElementById('password').value=password;
+	 }
+	document.getElementById("username").value=name;
+	document.getElementById('passwordByEye').value = "";//置空明文密码
+	document.getElementById('usernameByEye').value = "";
+	/** 结束*/
+	return true;
+}
+
+/**刷新验证码**/
+function refreshKaptchaImg(){     
+    var imgSrc = $("#imgObj");     
+    var src = imgSrc.attr("src");
+    var timestamp = new Date().valueOf(); 
+    imgSrc.attr("src",PORTAL_VIS.contextPath+"/kaptcha.jpg?ts="+timestamp);     
+}
+
+function checkCode(){     
+    var code = $("#veryCode").val();
+    if(code == "") {
+    	$("#logininfo").text("请输入验证码");
+    	$("#veryCode").focus();
+    	return false;
+    }
+    parameter = "code=" + code;     
+    $.ajax({     
+        type: "POST",     
+        url: PORTAL_VIS.contextPath+"/Resultcom",
+        data: parameter,     
+        success: checkCodeCallBack     
+    });     
+}
+
+function checkCodeCallBack(data){
+    if($.trim(data) == "right") {
+    	savePassFun(function  () {
+			$('#loginForm').submit();
+		});
+    	
+    } else {
+      $("#logininfo").text("验证码不正确");	
+      refreshKaptchaImg();
+      $("#veryCode").val("");
+      $("#veryCode").focus();
+    }
+}
+
+//加密方法
+function encryptByDES(message){
+	var keyHex = CryptoJS.enc.Utf8.parse("gdrcuportal");
+	var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+	return encrypted.toString();
+}
+
+function delectBtn(obj){
+	var value = $(obj).prev().text();
+	$(obj).parent().remove();
+	var userObj = getCookie("userObj");
+	var json = JSON.parse(userObj);
+	var tempJson = {};
+	var iNum = 0;
+	for(var i in json){
+		if(json[i]['name'] != value){
+		
+			tempJson[iNum] = json[i];
+			iNum++
+		}
+		
+	}
+	json = tempJson;
+	
+	setCookie("userObj",JSON.stringify(json)); 
+	return false;
+}
+		
+
+//保存密码登陆
+function savePassFun (obj) {
+ //var ischeck=document.getElementById('jizhumima').checked;
+ //if(ischeck){
+	var name = $("#usernameByEye").val();
+	var password = $("#passwordByEye").val();
+	var userObj = getCookie('userObj');
+	if(flag=='true'){//手动输入，密码加密
+		
+	}else{//采用cookie密码，检查文本框中的密码跟cookie密文是否一致，不一致则加密		    
+		if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		for(var i in json){
+				if((json[i]['password'] != password || json[i]['password'] == '') && json[i]['name'] == name){//当采用cookie密码时，由于浏览器中存在缓存，导致密码框中还是明文，为了避免缓存的影响，再将密码做加密
+					
+				}
+			} 
+		}
+	}
+	
+	var passwordIpu = password;
+	if($("#jizhumima:checked").val() != 1){//如果不勾选记住密码，则把密码置为空
+		passwordIpu = '';
+	}
+	var userFun = {
+		'name':name,
+		'password':passwordIpu
+	};
+	
+	
+	var userIs = true;
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var tempJson = {};
+		for(var i in json){
+		
+			i = parseInt(i);
+			if(json[i]['name'] == name && json[i]['password'] == password){
+				if($("#jizhumima:checked").val() != 1){
+					
+					json[i]['password'] = passwordIpu;
+				}
+				userIs = false;
+				break;
+			}else if((json[i]['password'] != password || json[i]['password'] == '') && json[i]['name'] == name){
+				
+				json[i]['password'] = passwordIpu;
+				userIs = false;
+			}
+			
+			tempJson[i+1] = json[i];
+		}
+		
+		if(userIs){
+			json = tempJson;
+			json[0] = userFun;
+			setCookie('userObj',JSON.stringify(json));
+		}else{
+			setCookie('userObj',JSON.stringify(json));
+		}
+		
+	}else{
+		var json = {};
+		json[0] = userFun;
+		setCookie('userObj',JSON.stringify(json));
+	}
+		
+	//}	
+	obj();
+	/*if(name != getCookie('username') || password != getCookie('userpassword')){
+		if(confirm("是否保存密码？")){
+			setCookie('username',name);
+			setCookie('userpassword',password);
+			obj();
+		}else{
+			obj();
+		}
+	}else{
+		obj();
+		
+	}*/
+  
+}
+
+function querys(){
+ 	window.open("http://128.17.22.18/REWS/creditrisk/anonymous_signal/anonymous.jsp");
+}
+
+function queryContact(){
+ 	window.open("http://96.8.8.88/COA/columnArticle/articleMessage/portal_message_detail_ForLogin.jsp?articleId=6941&releaseType=1");
+}
+
+
+//设置cookie
+function setCookie (name,value) {
+	var days = 30;
+	var exp = new Date();
+	exp.setTime(exp.getTime() + days*24*60*60*1000);
+	document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+}
+
+//获取cookie
+function getCookie(name) {
+    var aCookie = document.cookie.split("; ");
+    var lastMatch = null;
+    for (var i = 0; i < aCookie.length; i++) {
+        var aCrumb = aCookie[i].split("=");
+        if (name == aCrumb[0]) {
+            lastMatch = aCrumb;
+        }
+    }
+    if (lastMatch) {
+        var v = lastMatch[1];
+        if (v === undefined) return v;
+        return unescape(v);
+    }
+    return null;
+}
+
+//删除cookie
+function delCookie(name){
+	var exp = new Date();
+	exp.setTime(exp.getTime() - 1);
+	var cval = getCookie(name);
+	if(cval != null){
+		document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+	}
+}
+</script>
+
+=======
+
+
+
+
+
+<div class="dialog_box" id="login">
+	<a class="niming" style="position: absolute;right: 0;cursor: pointer;"  onclick="querys()"></a>
+	<a class="lianxi" style="position: absolute;left: 0;cursor: pointer;"  onclick="queryContact()"></a>
+	<form id="loginForm" name="form11" method="post" onsubmit="return check()">
+		<div class="login_img" style="visibility: hidden;margin-bottom: 0;">
+			<img src="win10_login/images/login_img.png">
+		</div>
+		<div id="logininfo" style="color:#F00"></div>
+		<div class="login_input" id="usernameBox">
+			<!--[if IE]><div class="login_sreach"></div><![endif]-->
+			<input type="text"  id="usernameByEye" name="usernameByEye" onkeydown="KeyDown()">
+			<div class="login_tips">输入用户名</div>
+		</div>
+		
+		<div class="login_input">
+			<input type="password"  id="passwordByEye" name="passwordByEye"  autocomplete="off" htmlEscape="true" onkeyup="changflag()"  onkeydown="KeyDown()">
+			<div class="login_tips">输入密码</div>
+		</div>
+		<div id="codeDiv" style="margin-bottom:10px;">			
+		</div>
+		<div class="xuan_input" style="margin: 0 auto 5px;width: 163px;text-align: left;color: #fff;font-size: 12px;">
+			<label>
+				<input type="checkbox" id="jizhumima" value="1"  style="vertical-align: middle;" onkeydown="KeyDown()"> 记住密码
+			</label>
+		</div>
+		<input style="display:none" type="submit"/>
+		<div class="login_button_box clearfix">
+			<a class="button" onclick="submitFun()">确认</a>
+			<a href="" class="button btn-cancel">取消</a>
+		</div>
+	  
+	  
+	  <input type="hidden" id="username" name="username">
+	  <input type="hidden" id="flag" name="flag" value="true">
+	  <input type="hidden" id="password" name="password">
+	  <input type='hidden' name='loginPage'  id="loginPageURL"/>    
+	  <input type='hidden' name='service'  id="serviceURL"/>
+	</form>
+</div>
+<script src="/portal/win10_login/security.min.js?v=1.0.0"  type="text/javascript"></script>
+<script type="text/javascript">
+var PORTAL_VIS = {
+	contextPath:"/portal",
+	loginNum: 1
+	
+};
+var focusPan = false;
+
+
+
+var flag=document.getElementById('flag').value;
+$(function(){
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		
+		for(var i in json){
+			if(i == 0){
+				$("#usernameByEye").val(json[i]['name']);
+				$("#passwordByEye").val(json[i]['password']);
+				$("#password").val(json[i]['password']);
+				if(json[i]['password'] != ''){
+					document.getElementById('jizhumima').checked = true;
+				}
+				break;
+			}
+			
+		}
+	}
+	
+	showLoginMessage();	
+})
+
+//检查是否登录失败
+function showLoginMessage(){
+	if(VIS_PORTAL.loginFailure == "true") {//登录失败
+		firstLogin = false;
+		showloginmsg(VIS_PORTAL.loginFailuremsg);
+		if(VIS_PORTAL.loginFailuremsg=="用户不存在") {
+			$("#usernameByEye").focus();
+		} else if(VIS_PORTAL.loginFailuremsg=="密码错误,登录失败") {
+			$("#usernameByEye").focus();
+			$("#passwordByEye").focus();
+		} else {
+			$("#usernameByEye").focus();
+		}
+		//$("#username").focus();
+		//$("#usernameByEye").focus();
+	}
+}
+
+
+function changflag(){
+	flag = "true";
+	document.getElementById('flag').value="true";
+}
+
+$("#usernameByEye").on('keyup',function  () {
+	var conentVal = $(this).val();
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		for(var i in json){
+			if(json[i]['name'].indexOf(conentVal)>-1){
+				content += '<li ><a href="javascript:;" password="'+json[i]['password']+'">'+json[i]['name']+'</a><div onclick="delectBtn(this)" class="delectBtn"></div></li>';
+			}
+		}
+		$(".login_sreach").html(content).show();
+	}
+	$("#passwordByEye").val('');
+})
+
+$("#passwordByEye").focus(function(){
+	$(".login_sreach").hide();
+})
+
+
+$("#usernameBox").click(function(e){
+	e.stopPropagation();
+	$(this).find("input").focus();
+	var userObj = getCookie('userObj');
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		var jsonArrary = [];
+		var jsonLength;
+		for(var i in json){
+			jsonArrary[i] = json[i];
+		}
+		if(jsonArrary.length > 10){
+			jsonLength = 10;
+		}else{
+			jsonLength = jsonArrary.length;
+		}
+		for(var j = 0;j < jsonLength; j++){
+			
+			content += '<li ><a href="javascript:;" password="'+jsonArrary[j]['password']+'">'+jsonArrary[j]['name']+'</a><div onclick="delectBtn(this)" class="delectBtn"></div></li>';
+			
+		}
+		$(".login_sreach").html(content).show();
+	}
+	
+})
+
+
+$("#usernameBox").on('click','.login_sreach a',function(e){
+	e.stopPropagation();
+	var conentVal = $(this).text();
+	var conentPass = $(this).attr('password');
+	if(conentPass != ''){
+		document.getElementById('jizhumima').checked = true;
+	}else{
+		document.getElementById('jizhumima').checked = false;
+	}
+	$("#usernameByEye").val(conentVal).next().hide();
+	$("#passwordByEye").val(conentPass).next().hide();
+	$(".login_sreach").hide();
+})
+
+$("body,#login").click(function(){
+	$(".login_sreach").hide();
+})
+
+$("#codeDiv").hide();
+
+loginNumF(); 
+
+
+function showloginmsg(msg){
+	$("#logininfo").text(msg);
+	document.getElementById('password').value = "";
+	//$("#username").focus();
+}
+
+function loginNumF(){		
+    var loginNum_= PORTAL_VIS.loginNum;
+    if(loginNum_>3){
+       var codeHtmlStr='<input id="veryCode" name="veryCode" type="text" onkeydown="KeyDown()" maxlength="4"/> '
+                       +'<img id="imgObj" style="cursor:pointer;border:none;" alt="'+PORTAL_VIS.contextPath+'/kaptcha.jpg" src="'+PORTAL_VIS.contextPath+'/kaptcha.jpg" />'
+                       +'<div id="info"></div>';
+       	$("#codeDiv").html(codeHtmlStr);
+	    $("#codeDiv").show();
+    }
+}
+
+
+$(".dialog_box").on('click','#imgObj',function(){
+	refreshKaptchaImg();
+});
+
+
+initHiddenValues();
+
+
+function initHiddenValues(){
+	document.getElementById("loginPageURL").value = VIS_PORTAL.loginPageURL;
+	document.getElementById("serviceURL").value = VIS_PORTAL.serviceURL;
+}
+
+function KeyDown(){	
+	if(event.keyCode == 13){
+		event.returnValue = false;
+		event.cancel = true;
+		var isHaveCode = $("#codeDiv").is(":visible");
+		if(isHaveCode){
+			checkCode();
+		}else{
+			savePassFun(function  () {
+				$('#loginForm').submit();
+			})
+		}
+	}
+}
+
+if(firstLogin){	
+	$("#usernameByEye").focus();
+}
+
+function submitFun(){
+	var isHaveCode = $("#codeDiv").is(":visible");
+	if(isHaveCode) {
+		checkCode();
+		savePassFun(function  () {
+		})
+	} else {
+		savePassFun(function  () {
+			$('#loginForm').submit();
+		})
+		
+	}
+}
+
+function check(){
+	var name = document.getElementById("usernameByEye").value;
+	var password = document.getElementById('passwordByEye').value;
+	if (name=="") {
+	showloginmsg("用户名不能为空");
+	$("#usernameByEye").focus();
+		return false;
+	} else if(password==""){
+		showloginmsg("密码不能为空");
+		$("#passwordByEye").focus();
+		return false;
+	} 
+	
+	/** 数据加密*/
+	
+	if(flag=="true") {//flag 为true的，表示手工输入密码		
+	 	document.getElementById('password').value = password;
+	 } else {//flag 为false的，表示默认使用cookie密码
+	    var userObj = getCookie('userObj');
+		if(userObj != null && userObj != undefined){
+			json = JSON.parse(userObj);
+			var content = '';
+			for(var i in json){
+				if((json[i]['password'] != password && json[i]['password'] != '') && json[i]['name'] == name){//采用cookie密码，检查文本框中的密码跟cookie密文是否一致，不一致则加密
+				   password=password;
+				}else if((json[i]['password'] != password && json[i]['password'] == '') && json[i]['name'] == name){
+				   password=password;
+				}
+			} 
+		}
+	 	document.getElementById('password').value=password;
+	 }
+	document.getElementById("username").value=name;
+	document.getElementById('passwordByEye').value = "";//置空明文密码
+	document.getElementById('usernameByEye').value = "";
+	/** 结束*/
+	return true;
+}
+
+/**刷新验证码**/
+function refreshKaptchaImg(){     
+    var imgSrc = $("#imgObj");     
+    var src = imgSrc.attr("src");
+    var timestamp = new Date().valueOf(); 
+    imgSrc.attr("src",PORTAL_VIS.contextPath+"/kaptcha.jpg?ts="+timestamp);     
+}
+
+function checkCode(){     
+    var code = $("#veryCode").val();
+    if(code == "") {
+    	$("#logininfo").text("请输入验证码");
+    	$("#veryCode").focus();
+    	return false;
+    }
+    parameter = "code=" + code;     
+    $.ajax({     
+        type: "POST",     
+        url: PORTAL_VIS.contextPath+"/Resultcom",
+        data: parameter,     
+        success: checkCodeCallBack     
+    });     
+}
+
+function checkCodeCallBack(data){
+    if($.trim(data) == "right") {
+    	savePassFun(function  () {
+			$('#loginForm').submit();
+		});
+    	
+    } else {
+      $("#logininfo").text("验证码不正确");	
+      refreshKaptchaImg();
+      $("#veryCode").val("");
+      $("#veryCode").focus();
+    }
+}
+
+//加密方法
+function encryptByDES(message){
+	var keyHex = CryptoJS.enc.Utf8.parse("gdrcuportal");
+	var encrypted = CryptoJS.DES.encrypt(message, keyHex, {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+	return encrypted.toString();
+}
+
+function delectBtn(obj){
+	var value = $(obj).prev().text();
+	$(obj).parent().remove();
+	var userObj = getCookie("userObj");
+	var json = JSON.parse(userObj);
+	var tempJson = {};
+	var iNum = 0;
+	for(var i in json){
+		if(json[i]['name'] != value){
+		
+			tempJson[iNum] = json[i];
+			iNum++
+		}
+		
+	}
+	json = tempJson;
+	
+	setCookie("userObj",JSON.stringify(json)); 
+	return false;
+}
+		
+
+//保存密码登陆
+function savePassFun (obj) {
+ //var ischeck=document.getElementById('jizhumima').checked;
+ //if(ischeck){
+	var name = $("#usernameByEye").val();
+	var password = $("#passwordByEye").val();
+	var userObj = getCookie('userObj');
+	if(flag=='true'){//手动输入，密码加密
+		
+	}else{//采用cookie密码，检查文本框中的密码跟cookie密文是否一致，不一致则加密		    
+		if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var content = '';
+		for(var i in json){
+				if((json[i]['password'] != password || json[i]['password'] == '') && json[i]['name'] == name){//当采用cookie密码时，由于浏览器中存在缓存，导致密码框中还是明文，为了避免缓存的影响，再将密码做加密
+					
+				}
+			} 
+		}
+	}
+	
+	var passwordIpu = password;
+	if($("#jizhumima:checked").val() != 1){//如果不勾选记住密码，则把密码置为空
+		passwordIpu = '';
+	}
+	var userFun = {
+		'name':name,
+		'password':passwordIpu
+	};
+	
+	
+	var userIs = true;
+	if(userObj != null && userObj != undefined){
+		json = JSON.parse(userObj);
+		var tempJson = {};
+		for(var i in json){
+		
+			i = parseInt(i);
+			if(json[i]['name'] == name && json[i]['password'] == password){
+				if($("#jizhumima:checked").val() != 1){
+					
+					json[i]['password'] = passwordIpu;
+				}
+				userIs = false;
+				break;
+			}else if((json[i]['password'] != password || json[i]['password'] == '') && json[i]['name'] == name){
+				
+				json[i]['password'] = passwordIpu;
+				userIs = false;
+			}
+			
+			tempJson[i+1] = json[i];
+		}
+		
+		if(userIs){
+			json = tempJson;
+			json[0] = userFun;
+			setCookie('userObj',JSON.stringify(json));
+		}else{
+			setCookie('userObj',JSON.stringify(json));
+		}
+		
+	}else{
+		var json = {};
+		json[0] = userFun;
+		setCookie('userObj',JSON.stringify(json));
+	}
+		
+	//}	
+	obj();
+	/*if(name != getCookie('username') || password != getCookie('userpassword')){
+		if(confirm("是否保存密码？")){
+			setCookie('username',name);
+			setCookie('userpassword',password);
+			obj();
+		}else{
+			obj();
+		}
+	}else{
+		obj();
+		
+	}*/
+  
+}
+
+function querys(){
+ 	window.open("http://128.17.22.18/REWS/creditrisk/anonymous_signal/anonymous.jsp");
+}
+
+function queryContact(){
+ 	window.open("http://96.8.8.88/COA/columnArticle/articleMessage/portal_message_detail_ForLogin.jsp?articleId=6941&releaseType=1");
+}
+
+
+//设置cookie
+function setCookie (name,value) {
+	var days = 30;
+	var exp = new Date();
+	exp.setTime(exp.getTime() + days*24*60*60*1000);
+	document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+}
+
+//获取cookie
+function getCookie(name) {
+    var aCookie = document.cookie.split("; ");
+    var lastMatch = null;
+    for (var i = 0; i < aCookie.length; i++) {
+        var aCrumb = aCookie[i].split("=");
+        if (name == aCrumb[0]) {
+            lastMatch = aCrumb;
+        }
+    }
+    if (lastMatch) {
+        var v = lastMatch[1];
+        if (v === undefined) return v;
+        return unescape(v);
+    }
+    return null;
+}
+
+//删除cookie
+function delCookie(name){
+	var exp = new Date();
+	exp.setTime(exp.getTime() - 1);
+	var cval = getCookie(name);
+	if(cval != null){
+		document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+	}
+}
+</script>
+
+>>>>>>> a05da3cbea95e88edb804f5d712c700cf95594e3
