@@ -61,7 +61,8 @@ public class DownloadApplet
   public DownloadTask getTask() {
       return task;
   }
-  public void init()
+  @Override
+public void init()
   {
     try
     {
@@ -174,7 +175,8 @@ public class DownloadApplet
     }
   }
   
-  public void actionPerformed(ActionEvent e)
+  @Override
+public void actionPerformed(ActionEvent e)
   {
     if (e.getSource() == this.butLoad)
     {
@@ -335,7 +337,8 @@ public class DownloadApplet
     }
   }
   
-  public void deleteFeedBack(boolean isSuccess, String type, Long id, Long mid)
+  @Override
+public void deleteFeedBack(boolean isSuccess, String type, Long id, Long mid)
   {
     if ((isSuccess) && (this.jCheckBox.isSelected()))
     {
@@ -364,7 +367,8 @@ public class DownloadApplet
     this.faultInfo = new StringBuffer("下列邮件转移失败,请重新转移或者手工备份:\n");
   }
   
-  public boolean fault(String type, Long id, String message)
+  @Override
+public boolean fault(String type, Long id, String message)
   {
     String msg = "邮件标题为: \"" + message + "\" 的邮件备份失败,是否继续备份其他邮件?";
     if (this.pane != null)
@@ -396,14 +400,16 @@ public class DownloadApplet
     return true;
   }
   
-  public void showProgress(int current, int total)
+  @Override
+public void showProgress(int current, int total)
   {
     this.progressBar.setMaximum(total);
     
     this.progressBar.setValue(current);
   }
   
-  public void finish(boolean isSuccess)
+  @Override
+public void finish(boolean isSuccess)
   {
     this.task = null;
     String result = "success";
@@ -435,13 +441,15 @@ public class DownloadApplet
     return this.isClear;
   }
   
-  public void setCurrentProgress(int total)
+  @Override
+public void setCurrentProgress(int total)
   {
     this.currentProgressBar.setValue(0);
     this.currentProgressBar.setMaximum(total);
   }
   
-  public void showCurrentProgress(int increaseSize)
+  @Override
+public void showCurrentProgress(int increaseSize)
   {
     this.currentProgressBar.setValue(this.currentProgressBar.getValue() + increaseSize);
   }

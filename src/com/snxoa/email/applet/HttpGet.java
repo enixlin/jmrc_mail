@@ -45,7 +45,8 @@ public class HttpGet
   {
     Thread thread = new Thread(new Runnable()
     {
-      public void run()
+      @Override
+	public void run()
       {
         int total = HttpGet.this.vDownLoad.size();
         boolean isSuccess = false;
