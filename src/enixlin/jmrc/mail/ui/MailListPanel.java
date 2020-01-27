@@ -166,6 +166,8 @@ public class MailListPanel extends JPanel {
 			case "收件箱": {
 			    DefaultTableModel dtm = mailService.ListToTableModel(mailService.getReciverList(),
 				    listType);
+			    
+			
 			    JTableHeader tableHeader = table.getTableHeader();
 			    tableHeader.add(new JLabel("邮件编号"), 0);
 			    tableHeader.add(new JLabel("标题"), 1);

@@ -19,15 +19,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.border.LineBorder;
+import javax.swing.text.html.HTMLEditorKit;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.snxoa.email.applet.MessageFile;
 
 import enixlin.jmrc.mail.service.MailService;
-import javax.swing.border.LineBorder;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.JButton;
 
 /**
  * @author linzhenhuan
@@ -57,7 +56,7 @@ public class MailContentPanel extends JPanel {
 
 	JsonParser jp = new JsonParser();
 	JsonObject jo = (JsonObject) jp.parse(content);
-	JsonObject message = (JsonObject) jo.get("message");
+	JsonObject message = (JsonObject) jo.get("messageTemp");
 
 	// 主容器：用于显示邮件主体的详细内容
 	ContentContainer = new JEditorPane();
@@ -73,6 +72,8 @@ public class MailContentPanel extends JPanel {
 	JTextPane textPane = new JTextPane();
 	textPane.setEditorKit(new HTMLEditorKit());
 	scrollPane.setViewportView(textPane);
+	
+	//显示邮件的内容
 	textPane.setText(message.get("content").toString().replace("/", ""));
 
 	JLabel label = new JLabel("邮件标题");
@@ -119,7 +120,8 @@ public class MailContentPanel extends JPanel {
 			File dir = new File(".");
 			String path = dir.getCanonicalPath();
 			// System.out.println(dir.getCanonicalPath());
-			Desktop.getDesktop().open(new File(path + "/attachFile/" + (String) mf.getFilename()));
+			String fileName=path + "/attachFile/" + (String) mf.getFilename();
+			Desktop.getDesktop().open(new File(fileName));
 		    } catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

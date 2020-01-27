@@ -21,11 +21,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.StyledEditorKit.ForegroundAction;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+
 
 import enixlin.jmrc.mail.entity.User;
 import enixlin.jmrc.mail.service.NetService;
@@ -164,7 +160,7 @@ public class Login {
      * @param httpClients
      */
     public void showMainWindow(NetService netService) {
-	System.out.println("shwo main window");
+	//System.out.println("shwo main window");
 	user = new User();
 	user.setId("1242546");
 	user.setName("林振焕");

@@ -1,0 +1,32 @@
+
+邮件
+http://96.8.8.88//COA/email/Applet.jar
+
+
+
+
+http://96.8.8.88/portal/sso.login?username=linzhenhuan&password=enixlin1981&service=http://96.8.8.88:80/portal/login/index.jsp&loginPage=win10_login/login.jsp&flag=true
+
+
+
+cookie:
+
+userObj=%7B%220%22%3A%7B%22name%22%3A%22linzhenhuan%22%2C%22password%22%3A%22%22%7D%7D;
+ ROUTEID=.P3; __guid=159395765.1494168851137907500.1561360758518.5293; 
+ PORTAL_JSESSIONID=C16elLcUYpEBc31zaRLMiiKDDea2nXZ3x274zPrH0uaRwWxoscc7!-78849968; 
+ monitor_count=46; 
+ OA_JSESSIONID=vpeelLkklq6goMGWYAx-hwx57T0CeJukyGLmDbcKYXP2ywapzCkc!1351271387
+ 
+ 
+ Request URL:
+ 
+ 
+ [JSESSIONID="OKmey6G_Sh7NLolQkDFHjkuxn2D8aufOzshFXctxT0pCMHjfi6OI!1199296561!1578917142975", 
+ version:0, domain:96.8.8.88, path:/COA, expiry:null] Illegal 'path' attribute "/COA". Path of origin: "/portal/sso.login"
+ 
+ 
+ 
+ 
+ 
+ 
+ http://96.8.8.88/portal/sso.login?service=http%3A%2F%2F96.8.8.88%3A80%2Fportal%2Flogin%2Findex.jsp&appId=96.8.8.88:80/portal&sessionId=VxLNOLVggf8cF4QdN2bv0-ULVa7E_Z_fiU1-WaVXMVpKxXYfYnky!2100298591!1523861468512
